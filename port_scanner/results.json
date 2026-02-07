@@ -1,0 +1,39 @@
+{
+    "172.20.0.10": {
+        "5000": {
+            "open": true,
+            "service": "http",
+            "banner": "HTTP/1.1 200 OK\r\nServer: Werkzeug/3.1.5 Python/3.11.14\r\nDate: Sat, 07 Feb 2026 10:36:29 GMT\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: 5324\r\nConnection: close\r\n\r\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Network Security Lab - User Management</title>\n    <style>\n        * {\n            margin: 0;\n            padding: 0;\n            box-sizing: border-box;\n        }\n        \n        body {\n            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\n            min-height: 100vh;\n            padding: 20px;\n        }\n        \n        .container {\n            max-width: 1200px;\n            margin: 0 auto;\n            background: white;\n            border-radius: 10px;\n            box-shadow: 0 10px 40px rgba(0,0,0,0.2);\n            overflow: hidden;\n        }\n        \n        header {\n            backgr"
+        }
+    },
+    "172.20.0.11": {
+        "3306": {
+            "open": true,
+            "service": "mysql",
+            "banner": "J\u0000\u0000\u0000\n8.0.45\u0000W\u001c\u0000\u0000\u0015\u001cj%[\u0010w\u0002\u0000\u0002\u0000\u0015\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0015\u001e4\u0005dAs9\u0014;N\b\u0000mysql_native_password\u0000"
+        }
+    },
+    "172.20.0.20": {
+        "2222": {
+            "open": true,
+            "service": "ssh",
+            "banner": "SSH-2.0-OpenSSH_8.9p1 Ubuntu-3ubuntu0.13"
+        }
+    },
+    "172.20.0.21": {
+        "8888": {
+            "open": true,
+            "service": "http",
+            "banner": "HTTP/1.1 200 OK\r\nServer: Werkzeug/3.1.5 Python/3.11.14\r\nDate: Sat, 07 Feb 2026 10:36:34 GMT\r\nContent-Type: application/json\r\nContent-Length: 652\r\nConnection: close\r\n\r\n{\"authentication\":{\"alternative\":\"?token=<token> query parameter\",\"header\":\"Authorization: Bearer <token>\",\"hint\":\"The token can be found by intercepting network traffic...\",\"type\":\"Bearer token\"},\"endpoints\":[{\"description\":\"API information\",\"method\":\"GET\",\"path\":\"/\"},{\"description\":\"Health check\",\"method\":\"GET\",\"path\":\"/health\"},{\"description\":\"Get flag (requires authentication)\",\"method\":\"GET\",\"path\":\"/flag\"},{\"description\":\"Get secret data (requires authentication)\",\"method\":\"GET\",\"path\":\"/data\"}],\"message\":\"This is a hidden API service. Authentication required.\",\"port\":8888,\"service\":\"Secret API Server\",\"status\":\"running\",\"version\":\"1.0\"}\n"
+        }
+    },
+    "172.20.0.22": {
+        "6379": {
+            "open": true,
+            "service": "unknown",
+            "banner": "-ERR wrong number of arguments for 'get' command\r\n"
+        }
+    },
+    "172.20.0.30": {},
+    "172.20.0.40": {}
+}

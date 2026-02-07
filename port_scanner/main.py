@@ -1,12 +1,10 @@
-#!/usr/bin/env python3
-
 import socket
 import argparse
 import ipaddress
 import sys
 import threading
 from queue import Queue
-
+import json
 
 # ----------------------------
 # Globals
@@ -21,23 +19,111 @@ lock = threading.Lock()
 # Core
 # ----------------------------
 
+def probe_http(sock):
+
+    try:
+        sock.sendall(b"GET / HTTP/1.0\r\n\r\n")
+        data = sock.recv(1024)
+
+        return data.decode(errors="ignore")
+
+    except:
+        return None
+
+def grab_banner(sock, timeout=2):
+
+    try:
+        sock.settimeout(timeout)
+
+        data = sock.recv(1024)
+
+        if data:
+            return data.decode(errors="ignore").strip()
+
+    except:
+        pass
+
+    return None
+
+def guess_service(banner):
+
+
+    b = banner.lower()
+
+    if "ssh" in b:
+        return "ssh"
+
+    if "ftp" in b:
+        return "ftp"
+
+    if "smtp" in b:
+        return "smtp"
+
+    if "http" in b:
+        return "http"
+
+    if "nginx" in b:
+        return "nginx"
+
+    if "apache" in b:
+        return "apache"
+
+    if "redis" in b:
+        return "redis"
+
+    if "mysql" in b:
+        return "mysql"
+
+    return "unknown"
+
+
 def scan_port(target, port, timeout):
     """
-    Check if TCP port is open
+    Check if TCP port is open and try to identify service
     """
+
+    result = {
+        "open": False,
+        "service": None,
+        "banner": None
+    }
+
+    sock = None
 
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.settimeout(timeout)
 
-        res = sock.connect_ex((target, port))
+        if sock.connect_ex((target, port)) != 0:
+            return result
 
-        sock.close()
 
-        return res == 0
+        # Port is open
+        result["open"] = True
+
+
+        # Try banner grab
+        banner = grab_banner(sock)
+        
+        if not banner:
+            banner = probe_http(sock)
+
+
+
+        if banner:
+            result["banner"] = banner
+            result["service"] = guess_service(banner)
+            return result
 
     except:
-        return False
+        pass
+
+    finally:
+        if sock:
+            sock.close()
+
+
+    return result
 
 
 def worker(timeout):
@@ -54,13 +140,12 @@ def worker(timeout):
             break
 
 
-        if scan_port(target, port, timeout):
+        scan_result = scan_port(target, port, timeout)
+        if scan_result["open"]:
 
             with lock:
-
-                results[target].append(port)
-
-                print(f"[+] {target}:{port} open")
+                results[target][port] = scan_result
+                # print(f"[+] {target}:{port} open")
 
 
         task_queue.task_done()
@@ -114,34 +199,50 @@ def parse_ports(port_str):
 
 
 def parse_targets(target_str):
+    """
+    Parse targets:
+      - IP
+      - Hostname
+      - CIDR
+      - Comma-separated mix
+    """
 
     targets = []
 
-    # CIDR
-    if "/" in target_str:
 
-        try:
-            net = ipaddress.ip_network(target_str, strict=False)
+    parts = [p.strip() for p in target_str.split(",") if p.strip()]
 
-            for ip in net.hosts():
-                targets.append(str(ip))
 
-        except:
-            print("[-] Invalid CIDR")
-            sys.exit(1)
+    for part in parts:
 
-    # Hostname / IP
-    else:
+        # CIDR
+        if "/" in part:
 
-        try:
-            ip = socket.gethostbyname(target_str)
-            targets.append(ip)
+            try:
+                net = ipaddress.ip_network(part, strict=False)
 
-        except:
-            print("[-] Cannot resolve target")
-            sys.exit(1)
+                for ip in net.hosts():
+                    targets.append(str(ip))
+
+            except:
+                print(f"[-] Invalid CIDR: {part}")
+                sys.exit(1)
+
+
+        # IP / Hostname
+        else:
+
+            try:
+                ip = socket.gethostbyname(part)
+                targets.append(ip)
+
+            except:
+                print(f"[-] Cannot resolve: {part}")
+                sys.exit(1)
+
 
     return targets
+
 
 
 # ----------------------------
@@ -208,10 +309,9 @@ def main():
     print(f"[*] Threads : {thread_count}")
     print("=" * 50)
 
-
     # Init results dict
     for t in targets:
-        results[t] = []
+        results[t] = {}
 
 
     # Build task queue
@@ -249,20 +349,16 @@ def main():
     print("=" * 50)
 
 
-    for target, open_ports in results.items():
-
-        if open_ports:
-
+    for target, ports in results.items():
+        if ports:
             print(f"\n[+] {target}")
-
-            for p in sorted(open_ports):
-                print(f"    {p}/tcp open")
-
-        # else:
-
-        #     print(f"\n[-] {target}: No open ports")
-
-
+            for p, info in sorted(ports.items()):
+                line = f"    {p}/tcp open"
+                if info["banner"]:
+                    line += f" | {info['banner']}"
+                print(line)
+    with open("port_scanner/results.json", "w") as f:
+        json.dump(results, f, indent=4)
 
 if __name__ == "__main__":
     main()
