@@ -1,106 +1,267 @@
 #!/usr/bin/env python3
-"""
-Port Scanner - Starter Template for Students
-Assignment 2: Network Security
-
-This is a STARTER TEMPLATE to help you get started.
-You should expand and improve upon this basic implementation.
-
-TODO for students:
-1. Implement multi-threading for faster scans
-2. Add banner grabbing to detect services
-3. Add support for CIDR notation (e.g., 192.168.1.0/24)
-4. Add different scan types (SYN scan, UDP scan, etc.)
-5. Add output formatting (JSON, CSV, etc.)
-6. Implement timeout and error handling
-7. Add progress indicators
-8. Add service fingerprinting
-"""
 
 import socket
+import argparse
+import ipaddress
 import sys
+import threading
+from queue import Queue
 
 
-def scan_port(target, port, timeout=1.0):
+# ----------------------------
+# Globals
+# ----------------------------
+
+task_queue = Queue()
+results = {}
+lock = threading.Lock()
+
+
+# ----------------------------
+# Core
+# ----------------------------
+
+def scan_port(target, port, timeout):
     """
-    Scan a single port on the target host
-
-    Args:
-        target (str): IP address or hostname to scan
-        port (int): Port number to scan
-        timeout (float): Connection timeout in seconds
-
-    Returns:
-        bool: True if port is open, False otherwise
+    Check if TCP port is open
     """
+
     try:
-        # TODO: Create a socket
-        # TODO: Set timeout
-        # TODO: Try to connect to target:port
-        # TODO: Close the socket
-        # TODO: Return True if connection successful
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
 
-        pass  # Remove this and implement
+        res = sock.connect_ex((target, port))
 
-    except (socket.timeout, ConnectionRefusedError, OSError):
+        sock.close()
+
+        return res == 0
+
+    except:
         return False
 
 
-def scan_range(target, start_port, end_port):
+def worker(timeout):
     """
-    Scan a range of ports on the target host
-
-    Args:
-        target (str): IP address or hostname to scan
-        start_port (int): Starting port number
-        end_port (int): Ending port number
-
-    Returns:
-        list: List of open ports
+    Worker thread
     """
-    open_ports = []
 
-    print(f"[*] Scanning {target} from port {start_port} to {end_port}")
-    print(f"[*] This may take a while...")
+    while True:
 
-    # TODO: Implement the scanning logic
-    # Hint: Loop through port range and call scan_port()
-    # Hint: Consider using threading for better performance
+        try:
+            target, port = task_queue.get_nowait()
 
-    for port in range(start_port, end_port + 1):
-        # TODO: Scan this port
-        # TODO: If open, add to open_ports list
-        # TODO: Print progress (optional)
-        pass  # Remove this and implement
+        except:
+            break
 
-    return open_ports
 
+        if scan_port(target, port, timeout):
+
+            with lock:
+
+                results[target].append(port)
+
+                print(f"[+] {target}:{port} open")
+
+
+        task_queue.task_done()
+
+
+# ----------------------------
+# Helpers
+# ----------------------------
+
+def parse_ports(port_str):
+
+    ports = set()
+
+    try:
+
+        for part in port_str.split(","):
+
+            part = part.strip()
+
+            if "-" in part:
+
+                start, end = part.split("-")
+
+                start = int(start)
+                end = int(end)
+
+                if start < 1 or end > 65535 or start > end:
+                    raise ValueError
+
+                for p in range(start, end + 1):
+                    ports.add(p)
+
+            else:
+
+                p = int(part)
+
+                if p < 1 or p > 65535:
+                    raise ValueError
+
+                ports.add(p)
+
+        if not ports:
+            raise ValueError
+
+        return sorted(ports)
+
+    except:
+        raise argparse.ArgumentTypeError(
+            "Invalid port format"
+        )
+
+
+def parse_targets(target_str):
+
+    targets = []
+
+    # CIDR
+    if "/" in target_str:
+
+        try:
+            net = ipaddress.ip_network(target_str, strict=False)
+
+            for ip in net.hosts():
+                targets.append(str(ip))
+
+        except:
+            print("[-] Invalid CIDR")
+            sys.exit(1)
+
+    # Hostname / IP
+    else:
+
+        try:
+            ip = socket.gethostbyname(target_str)
+            targets.append(ip)
+
+        except:
+            print("[-] Cannot resolve target")
+            sys.exit(1)
+
+    return targets
+
+
+# ----------------------------
+# CLI
+# ----------------------------
+
+def build_parser():
+
+    parser = argparse.ArgumentParser(
+        prog="port_scanner",
+        description="Multithreaded TCP Port Scanner"
+    )
+
+    parser.add_argument(
+        "-t", "--target",
+        required=True,
+        help="IP, hostname, or CIDR"
+    )
+
+    parser.add_argument(
+        "-p", "--ports",
+        required=True,
+        type=parse_ports,
+        help="Ports (e.g. 1-1024,22,80)"
+    )
+
+    parser.add_argument(
+        "--timeout",
+        type=float,
+        default=1.0,
+        help="Socket timeout (default: 1s)"
+    )
+
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=100,
+        help="Number of threads (default: 100)"
+    )
+
+    return parser
+
+
+# ----------------------------
+# Main
+# ----------------------------
 
 def main():
-    """Main function"""
-    # TODO: Parse command-line arguments
-    # TODO: Validate inputs
-    # TODO: Call scan_range()
-    # TODO: Display results
 
-    # Example usage (you should improve this):
-    if len(sys.argv) < 2:
-        print("Usage: python3 port_scanner_template.py <target>")
-        print("Example: python3 port_scanner_template.py 172.20.0.10")
-        sys.exit(1)
+    parser = build_parser()
+    args = parser.parse_args()
 
-    target = sys.argv[1]
-    start_port = 1
-    end_port = 1024  # Scan first 1024 ports by default
+    targets = parse_targets(args.target)
+    ports = args.ports
+    timeout = args.timeout
+    thread_count = args.threads
 
-    print(f"[*] Starting port scan on {target}")
 
-    open_ports = scan_range(target, start_port, end_port)
+    print("=" * 50)
+    print(" Multithreaded Port Scanner")
+    print("=" * 50)
+    print(f"[*] Targets : {len(targets)}")
+    print(f"[*] Ports   : {len(ports)}")
+    print(f"[*] Threads : {thread_count}")
+    print("=" * 50)
 
-    print(f"\n[+] Scan complete!")
-    print(f"[+] Found {len(open_ports)} open ports:")
-    for port in open_ports:
-        print(f"    Port {port}: open")
+
+    # Init results dict
+    for t in targets:
+        results[t] = []
+
+
+    # Build task queue
+    for target in targets:
+        for port in ports:
+
+            task_queue.put((target, port))
+
+
+    print(f"[*] Total scans: {task_queue.qsize()}")
+
+
+    # Start workers
+    threads = []
+
+    for _ in range(thread_count):
+
+        t = threading.Thread(
+            target=worker,
+            args=(timeout,),
+            daemon=True
+        )
+
+        threads.append(t)
+        t.start()
+
+
+    # Wait
+    task_queue.join()
+
+
+    # Summary
+    print("\n" + "=" * 50)
+    print(" Scan Summary")
+    print("=" * 50)
+
+
+    for target, open_ports in results.items():
+
+        if open_ports:
+
+            print(f"\n[+] {target}")
+
+            for p in sorted(open_ports):
+                print(f"    {p}/tcp open")
+
+        # else:
+
+        #     print(f"\n[-] {target}: No open ports")
+
 
 
 if __name__ == "__main__":
