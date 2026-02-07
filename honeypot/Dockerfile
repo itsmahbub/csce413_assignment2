@@ -3,6 +3,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 COPY honeypot.py .
+COPY logger.py .
 
 # Install dependency
 RUN pip install --no-cache-dir paramiko

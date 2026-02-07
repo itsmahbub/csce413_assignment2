@@ -1,26 +1,13 @@
 import socket
 import threading
 import paramiko
-import logging
 import os
 import time
-
-LOG_PATH = "/app/logs/honeypot.log"
+from logger import create_logger
 
 HOST_KEY = paramiko.RSAKey.generate(2048)
 
-
-def setup_logging():
-    os.makedirs("/app/logs", exist_ok=True)
-
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.FileHandler(LOG_PATH),
-            logging.StreamHandler()
-        ],
-    )
+logger = create_logger("ssh_honeypot")
 
 
 # ---------------------------
@@ -33,7 +20,7 @@ class FakeSSHServer(paramiko.ServerInterface):
         self.client_ip = client_ip
 
     def check_auth_password(self, username, password):
-        logging.warning(
+        logger.warning(
             f"[SSH LOGIN] {self.client_ip} | {username}:{password}"
         )
         return paramiko.AUTH_FAILED   # Always reject
@@ -56,7 +43,7 @@ class FakeSSHServer(paramiko.ServerInterface):
 
 def handle_client(client, addr):
     ip = addr[0]
-    logging.info(f"[SSH CONNECT] {ip}")
+    logger.info(f"[SSH CONNECT] {ip}")
 
     try:
         transport = paramiko.Transport(client)
@@ -77,7 +64,7 @@ def handle_client(client, addr):
         chan.close()
 
     except Exception as e:
-        logging.error(f"SSH error from {ip}: {e}")
+        logger.error(f"SSH error from {ip}: {e}")
 
     finally:
         client.close()
@@ -95,7 +82,7 @@ def start_ssh_honeypot():
     sock.bind(("0.0.0.0", 22))
     sock.listen(100)
 
-    logging.info("[+] SSH Honeypot listening on port 22")
+    logger.info("[+] SSH Honeypot listening on port 22")
 
     while True:
         client, addr = sock.accept()
@@ -109,11 +96,10 @@ def start_ssh_honeypot():
 
 
 def run_honeypot():
-    logging.info("Starting SSH honeypot...")
+    logger.info("Starting SSH honeypot...")
 
     start_ssh_honeypot()
 
 
 if __name__ == "__main__":
-    setup_logging()
     run_honeypot()
