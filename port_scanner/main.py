@@ -283,6 +283,12 @@ def build_parser():
         help="Number of threads (default: 100)"
     )
 
+    # parser.add_argument(
+    #     "--liveness-only",
+    #     action="store_true",
+    #     help="Return only live hosts"
+    # )
+
     return parser
 
 
@@ -299,6 +305,7 @@ def main():
     ports = args.ports
     timeout = args.timeout
     thread_count = args.threads
+    # liveness_only = args.liveness_only
 
 
     print("=" * 50)
@@ -354,8 +361,8 @@ def main():
             print(f"\n[+] {target}")
             for p, info in sorted(ports.items()):
                 line = f"    {p}/tcp open"
-                if info["banner"]:
-                    line += f" | {info['banner']}"
+                # if info["banner"]:
+                #     line += f" | {info['banner']}"
                 print(line)
     with open("port_scanner/results.json", "w") as f:
         json.dump(results, f, indent=4)

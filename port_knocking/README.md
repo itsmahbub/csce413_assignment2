@@ -18,5 +18,7 @@ This directory is a starter template for the port knocking portion of the assign
 
 ### Example usage
 ```bash
-python3 knock_client.py --target 172.20.0.40 --sequence 1234,5678,9012
+python knock_client.py --target 172.20.0.40 --sequence 1234,5678,9012
 ```
+
+

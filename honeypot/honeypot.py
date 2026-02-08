@@ -5,9 +5,30 @@ import os
 import time
 from logger import create_logger
 
-HOST_KEY = paramiko.RSAKey.generate(2048)
+KEY_FILE = "server.key"
+
+if os.path.exists(KEY_FILE):
+    HOST_KEY = paramiko.RSAKey(filename=KEY_FILE)
+else:
+    HOST_KEY = paramiko.RSAKey.generate(2048)
+    HOST_KEY.write_private_key_file(KEY_FILE)
+
 
 logger = create_logger("ssh_honeypot")
+
+# Fake credential database
+VALID_USERS = {
+    "root": "toor",
+    "admin": "admin123",
+    "test": "test"
+}
+
+VFS = {
+    "/": ["home", "etc", "var"],
+    "/home": ["root", "admin", "test"],
+    "/home/root": ["secret.txt"],
+    "/etc": ["passwd", "shadow"],
+}
 
 
 # ---------------------------
@@ -23,7 +44,13 @@ class FakeSSHServer(paramiko.ServerInterface):
         logger.warning(
             f"[SSH LOGIN] {self.client_ip} | {username}:{password}"
         )
-        return paramiko.AUTH_FAILED   # Always reject
+
+        if username in VALID_USERS and VALID_USERS[username] == password:
+            logger.info(f"[SSH SUCCESS] {self.client_ip} | {username}")
+            return paramiko.AUTH_SUCCESSFUL
+
+        return paramiko.AUTH_FAILED
+
 
     def get_allowed_auths(self, username):
         return "password"
@@ -35,6 +62,96 @@ class FakeSSHServer(paramiko.ServerInterface):
 
     def check_channel_shell_request(self, channel):
         return True
+    def check_channel_pty_request(self, channel, term, width, height, pw, ph, modes):
+    return True
+
+
+def handle_command(chan, cmd, cwd):
+
+    parts = cmd.split()
+
+    if not parts:
+        return cwd, True
+
+    base = parts[0]
+
+    if base == "exit":
+        chan.send("logout\n")
+        return cwd, False
+
+    elif base == "pwd":
+        chan.send(cwd + "\n")
+
+    elif base == "ls":
+        files = VFS.get(cwd, [])
+        chan.send("  ".join(files) + "\n")
+
+    elif base == "cd":
+
+        if len(parts) < 2:
+            return cwd, True
+
+        target = parts[1]
+
+        if target == "..":
+            new = os.path.dirname(cwd) or "/"
+
+        elif target.startswith("/"):
+            new = target
+
+        else:
+            new = cwd.rstrip("/") + "/" + target
+
+        if new in VFS:
+            return new, True
+        else:
+            chan.send("No such directory\n")
+
+    elif base == "cat":
+
+        if len(parts) < 2:
+            return cwd, True
+
+        file = parts[1]
+
+        if file == "secret.txt":
+            chan.send("FLAG{honeytoken_ssh}\n")
+        else:
+            chan.send("Permission denied\n")
+
+    else:
+        chan.send(f"{base}: command not found\n")
+
+    return cwd, True
+
+def fake_shell(chan, username, ip):
+
+    cwd = "/home/" + username
+    hostname = "ubuntu-server"
+
+    chan.send(f"Welcome to Ubuntu 20.04 LTS\n\n")
+
+    while True:
+
+        prompt = f"{username}@{hostname}:{cwd}$ "
+        chan.send(prompt)
+
+        cmd = ""
+
+        while not cmd.endswith("\n"):
+            data = chan.recv(1024).decode("utf-8", errors="ignore")
+            if not data:
+                return
+            cmd += data
+
+        cmd = cmd.strip()
+
+        logger.info(f"[CMD] {ip} | {username} | {cmd}")
+
+        cwd, running = handle_command(chan, cmd, cwd)
+
+        if not running:
+            break
 
 
 # ---------------------------
@@ -55,13 +172,12 @@ def handle_client(client, addr):
 
         chan = transport.accept(20)
 
-        if chan is None:
-            return
+        if chan:
 
-        chan.send("Access denied.\r\n")
-        time.sleep(2)
+            username = transport.get_username()
 
-        chan.close()
+            fake_shell(chan, username, ip)
+
 
     except Exception as e:
         logger.error(f"SSH error from {ip}: {e}")
@@ -79,7 +195,8 @@ def start_ssh_honeypot():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    sock.bind(("0.0.0.0", 22))
+    sock.bind(("0.0.0.0", 2222))
+
     sock.listen(100)
 
     logger.info("[+] SSH Honeypot listening on port 22")
