@@ -4,6 +4,7 @@ WORKDIR /app
 
 COPY honeypot.py .
 COPY logger.py .
+COPY server.key .
 
 # Install dependency
 RUN pip install --no-cache-dir paramiko

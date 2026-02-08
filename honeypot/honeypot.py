@@ -39,6 +39,7 @@ class FakeSSHServer(paramiko.ServerInterface):
 
     def __init__(self, client_ip):
         self.client_ip = client_ip
+        self.event = threading.Event()
 
     def check_auth_password(self, username, password):
         logger.warning(
@@ -61,9 +62,10 @@ class FakeSSHServer(paramiko.ServerInterface):
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
 
     def check_channel_shell_request(self, channel):
+        self.event.set()
         return True
     def check_channel_pty_request(self, channel, term, width, height, pw, ph, modes):
-    return True
+        return True
 
 
 def handle_command(chan, cmd, cwd):
@@ -76,15 +78,15 @@ def handle_command(chan, cmd, cwd):
     base = parts[0]
 
     if base == "exit":
-        chan.send("logout\n")
+        chan.send("logout\r\n")
         return cwd, False
 
     elif base == "pwd":
-        chan.send(cwd + "\n")
+        chan.send( cwd + "\r\n")
 
     elif base == "ls":
         files = VFS.get(cwd, [])
-        chan.send("  ".join(files) + "\n")
+        chan.send( "  ".join(files) + "\r\n")
 
     elif base == "cd":
 
@@ -115,12 +117,12 @@ def handle_command(chan, cmd, cwd):
         file = parts[1]
 
         if file == "secret.txt":
-            chan.send("FLAG{honeytoken_ssh}\n")
+            chan.send("FLAG{honeytoken_ssh}\r\n")
         else:
-            chan.send("Permission denied\n")
+            chan.send("Permission denied\r\n")
 
     else:
-        chan.send(f"{base}: command not found\n")
+        chan.send(f"{base}: command not found\r\n")
 
     return cwd, True
 
@@ -129,22 +131,25 @@ def fake_shell(chan, username, ip):
     cwd = "/home/" + username
     hostname = "ubuntu-server"
 
-    chan.send(f"Welcome to Ubuntu 20.04 LTS\n\n")
+    chan.send(f"Welcome to Ubuntu 20.04 LTS\r\n")
 
     while True:
 
         prompt = f"{username}@{hostname}:{cwd}$ "
-        chan.send(prompt)
+        chan.send(prompt + "\r\n")
+
 
         cmd = ""
 
-        while not cmd.endswith("\n"):
+        while not cmd.endswith("\n") and not cmd.endswith("\r"):
             data = chan.recv(1024).decode("utf-8", errors="ignore")
             if not data:
                 return
+            chan.send(data)   # echo back
             cmd += data
 
-        cmd = cmd.strip()
+
+        cmd = cmd.replace("\r", "").replace("\n", "").strip()
 
         logger.info(f"[CMD] {ip} | {username} | {cmd}")
 
@@ -172,11 +177,27 @@ def handle_client(client, addr):
 
         chan = transport.accept(20)
 
-        if chan:
+        if not chan:
+            return
 
-            username = transport.get_username()
+        # Wait for shell request
+        while not transport.is_authenticated():
+            time.sleep(0.1)
 
-            fake_shell(chan, username, ip)
+        # Wait until client requests shell
+        server.event.wait(10)
+
+        if not server.event.is_set():
+            logger.warning("No shell request")
+            chan.close()
+            return
+
+        username = transport.get_username()
+        chan.settimeout(None)
+        chan.setblocking(True)
+
+        fake_shell(chan, username, ip)
+
 
 
     except Exception as e:
@@ -195,7 +216,7 @@ def start_ssh_honeypot():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    sock.bind(("0.0.0.0", 2222))
+    sock.bind(("0.0.0.0", 22))
 
     sock.listen(100)
 
