@@ -35,14 +35,15 @@ options:
 ```bash
 docker compose up port_knocking --build # Listens to port 2222 (dummy server) and starts knock_server.py which blocks requests to the protected port 2222 and listens for port knocking.
 nc 172.20.0.40 # Will fail
-python knock_client.py --target 172.20.0.20 --sequence 1234,5678,9012
+python knock_client.py --target 172.20.0.40 --sequence 1234,5678,9012
 nc 172.20.0.40 # Will succeed
 ```
 
 ## To protect real service
 
 Run the `knock_server.py` on any server where you want to protect a port.
-For instance, to protect the ssh service in `secrete_ssh` container, we will modify its startup script in `secret_ssh/Dockerfile` to run this port knocking server on startup. This way, it will block the protected port `2222` by default and will open only to clients who knocks properly.
+For instance, to protect the ssh service in `secrete_ssh` container, we will ssh into that container and run `python3 /apps/knock_server.py`. This way, it will block the protected port `2222` by default and will open only to clients who knocks properly.
+
 
 
 
