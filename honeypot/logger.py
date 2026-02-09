@@ -47,3 +47,28 @@ def create_logger(name="honeypot", level=logging.INFO):
     logger.addHandler(console_handler)
 
     return logger
+
+
+# -------------------------------
+# JSONL Event Logger
+# -------------------------------
+
+def log_event(event, client_ip=None, client_port=None, **extra):
+    """
+    Write structured security events in JSONL format
+    """
+
+    os.makedirs(LOG_DIR, exist_ok=True)
+
+    entry = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "event": event,
+        "client_ip": client_ip,
+        "client_port": client_port
+    }
+
+    # Add optional fields
+    entry.update(extra)
+
+    with open(os.path.join(LOG_DIR, JSONL_FILE), "a") as f:
+        f.write(json.dumps(entry) + "\n")

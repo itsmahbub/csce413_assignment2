@@ -3,7 +3,14 @@ import threading
 import paramiko
 import os
 import time
-from logger import create_logger
+from logger import create_logger, log_event
+
+# ---- Alert Configuration ----
+MAX_FAILED_LOGINS = 5
+FAILED_WINDOW = 300        # 5 minutes
+
+failed_logins = defaultdict(list)
+blacklisted_ips = set(["172.20.0.50"])
 
 KEY_FILE = "server.key"
 
