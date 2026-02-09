@@ -1,9 +1,14 @@
 FROM ubuntu:22.04
 
-# Install OpenSSH server
+
+# Install OpenSSH server and iptables (for port knocking)
 RUN apt-get update && \
-    apt-get install -y openssh-server && \
+    apt-get install -y openssh-server iptables iproute2 && \
     rm -rf /var/lib/apt/lists/*
+
+# Force legacy backend (already included in iptables package)
+RUN update-alternatives --set iptables /usr/sbin/iptables-legacy && \
+    update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
 # Create the SSH run directory
 RUN mkdir -p /var/run/sshd
@@ -33,8 +38,14 @@ RUN echo '#!/bin/bash' > /home/sshuser/.bashrc && \
 COPY sshd_config /etc/ssh/sshd_config
 COPY banner /etc/ssh/banner
 
+
+COPY knock_server.py /app/
+
 # Expose SSH on port 2222 (non-standard port - students must discover this)
 EXPOSE 2222
 
 # Start SSH server
-CMD ["/usr/sbin/sshd", "-D", "-p", "2222"]
+# CMD ["/usr/sbin/sshd", "-D", "-p", "2222"]
+
+# Start SSH server and port knocking server
+CMD ["sh", "-c", "/usr/sbin/sshd -D -p 2222 & python3 /app/knock_server.py --protected-port 2222"]

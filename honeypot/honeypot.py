@@ -78,15 +78,15 @@ def handle_command(chan, cmd, cwd):
     base = parts[0]
 
     if base == "exit":
-        chan.send("logout\r\n")
+        chan.send("\r\nlogout\r\n")
         return cwd, False
 
     elif base == "pwd":
-        chan.send( cwd + "\r\n")
+        chan.send( "\r\n" + cwd + "\r\n" )
 
     elif base == "ls":
         files = VFS.get(cwd, [])
-        chan.send( "  ".join(files) + "\r\n")
+        chan.send( "\r\n" + "  ".join(files)  + "\r\n")
 
     elif base == "cd":
 
@@ -105,9 +105,10 @@ def handle_command(chan, cmd, cwd):
             new = cwd.rstrip("/") + "/" + target
 
         if new in VFS:
+            chan.send("\r\n")
             return new, True
         else:
-            chan.send("No such directory\n")
+            chan.send("\r\nNo such directory\r\n")
 
     elif base == "cat":
 
@@ -117,12 +118,12 @@ def handle_command(chan, cmd, cwd):
         file = parts[1]
 
         if file == "secret.txt":
-            chan.send("FLAG{honeytoken_ssh}\r\n")
+            chan.send("\r\nFLAG{honeytoken_ssh}\r\n")
         else:
-            chan.send("Permission denied\r\n")
+            chan.send("\r\nPermission denied\r\n")
 
     else:
-        chan.send(f"{base}: command not found\r\n")
+        chan.send(f"\r\n{base}: command not found\r\n")
 
     return cwd, True
 
@@ -136,7 +137,7 @@ def fake_shell(chan, username, ip):
     while True:
 
         prompt = f"{username}@{hostname}:{cwd}$ "
-        chan.send(prompt + "\r\n")
+        chan.send(prompt)
 
 
         cmd = ""

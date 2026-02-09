@@ -55,6 +55,8 @@ services:
     dns:
       - 8.8.8.8
       - 1.1.1.1
+    cap_add:
+      - NET_ADMIN
     networks:
       vulnerable_network:
         ipv4_address: 172.20.0.20
@@ -114,6 +116,8 @@ services:
     networks:
       vulnerable_network:
         ipv4_address: 172.20.0.40
+    volumes:
+      - ./port_knocking/logs:/app/logs
 
 networks:
   vulnerable_network:
