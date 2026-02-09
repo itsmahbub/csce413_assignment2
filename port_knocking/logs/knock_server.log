@@ -1,0 +1,101 @@
+2026-02-09 18:02:46,615 - INFO - Blocking port 2222 by default
+2026-02-09 18:02:46,633 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-09 18:02:46,633 - INFO - Listening on 1234
+2026-02-09 18:02:46,633 - INFO - Listening on 5678
+2026-02-09 18:02:46,634 - INFO - Listening on 9012
+2026-02-09 20:03:14,362 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 5678
+2026-02-09 20:03:14,661 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 9012
+2026-02-09 20:03:14,662 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:03:44,077 - INFO - Wrong knock from 172.20.0.1: Expected: 5678, Got: 1234
+2026-02-09 20:03:44,377 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 5678
+2026-02-09 20:03:44,678 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 9012
+2026-02-09 20:04:08,050 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 9012
+2026-02-09 20:04:08,051 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:04:08,052 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:04:33,115 - INFO - Wrong knock from 172.20.0.1: Expected: 9012, Got: 1234
+2026-02-09 20:04:33,123 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 5678
+2026-02-09 20:04:33,421 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 9012
+2026-02-09 20:04:36,428 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:04:36,428 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:04:36,672 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:04:36,673 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:04:36,674 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:09:48,144 - INFO - Blocking port 2222 by default
+2026-02-09 20:09:48,147 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-09 20:09:48,148 - INFO - Listening on 1234
+2026-02-09 20:09:48,148 - INFO - Listening on 5678
+2026-02-09 20:09:48,148 - INFO - Listening on 9012
+2026-02-09 20:13:33,530 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 9012
+2026-02-09 20:13:33,532 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:13:33,533 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:14:16,623 - INFO - Wrong knock from 172.20.0.1: Expected: 9012, Got: 1234
+2026-02-09 20:14:16,624 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 5678
+2026-02-09 20:14:17,466 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 9012
+2026-02-09 20:14:35,506 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:14:35,507 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:14:38,513 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:14:38,513 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:14:38,516 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:16:05,760 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:16:05,763 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:16:06,172 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:16:06,172 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:16:06,175 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:16:09,860 - INFO - Knock 1/3 from 172.20.0.1
+2026-02-09 20:16:11,862 - INFO - Wrong knock from 172.20.0.1: Expected: 5678, Got: 9012
+2026-02-09 20:16:12,864 - INFO - Wrong knock from 172.20.0.1: Expected: 1234, Got: 5678
+2026-02-09 20:23:32,520 - INFO - Blocking port 2222 by default
+2026-02-09 20:23:32,536 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-09 20:23:32,536 - INFO - Listening on 1234
+2026-02-09 20:23:32,536 - INFO - Listening on 5678
+2026-02-09 20:23:32,536 - INFO - Listening on 9012
+2026-02-09 20:23:36,251 - INFO - First knock from 172.20.0.1
+2026-02-09 20:23:37,252 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:23:40,263 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:23:40,263 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:23:40,264 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:24:19,618 - INFO - First knock from 172.20.0.1
+2026-02-09 20:24:20,617 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:24:21,622 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:24:21,623 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:24:21,623 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:24:34,034 - INFO - Blocking port 2222 by default
+2026-02-09 20:24:34,036 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-09 20:24:34,037 - INFO - Listening on 1234
+2026-02-09 20:24:34,037 - INFO - Listening on 5678
+2026-02-09 20:24:34,037 - INFO - Listening on 9012
+2026-02-09 20:24:52,286 - INFO - First knock from 172.20.0.1
+2026-02-09 20:24:53,287 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:24:54,288 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:24:54,288 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:24:54,289 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:36:12,350 - INFO - Blocking port 2222 by default
+2026-02-09 20:36:12,363 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-09 20:36:12,364 - INFO - Listening on 1234
+2026-02-09 20:36:12,364 - INFO - Listening on 5678
+2026-02-09 20:36:12,364 - INFO - Listening on 9012
+2026-02-09 20:36:48,903 - INFO - First knock from 172.20.0.1
+2026-02-09 20:36:49,901 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:36:50,902 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:36:50,903 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:36:50,903 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:38:06,082 - INFO - First knock from 172.20.0.1
+2026-02-09 20:38:06,898 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:38:09,907 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:38:09,907 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:38:09,908 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:38:12,951 - INFO - First knock from 172.20.0.1
+2026-02-09 20:38:15,960 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:38:15,961 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:38:15,961 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:38:15,961 - INFO - Opening 2222 for 172.20.0.1
+2026-02-09 20:40:46,245 - INFO - Blocking port 2222 by default
+2026-02-09 20:40:46,261 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-09 20:40:46,261 - INFO - Listening on 1234
+2026-02-09 20:40:46,261 - INFO - Listening on 5678
+2026-02-09 20:40:46,262 - INFO - Listening on 9012
+2026-02-09 20:41:20,328 - INFO - First knock from 172.20.0.1
+2026-02-09 20:41:21,329 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-09 20:41:22,330 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-09 20:41:22,330 - INFO - Access granted to 172.20.0.1
+2026-02-09 20:41:22,330 - INFO - Opening 2222 for 172.20.0.1

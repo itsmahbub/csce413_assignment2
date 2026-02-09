@@ -6,7 +6,7 @@ RUN apt-get update && \
     apt-get install -y openssh-server iptables iproute2 && \
     rm -rf /var/lib/apt/lists/*
 
-# Force legacy backend (already included in iptables package)
+# Force legacy backend
 RUN update-alternatives --set iptables /usr/sbin/iptables-legacy && \
     update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 
@@ -45,7 +45,7 @@ COPY knock_server.py /app/
 EXPOSE 2222
 
 # Start SSH server
-# CMD ["/usr/sbin/sshd", "-D", "-p", "2222"]
+CMD ["/usr/sbin/sshd", "-D", "-p", "2222"]
 
 # Start SSH server and port knocking server
-CMD ["sh", "-c", "/usr/sbin/sshd -D -p 2222 & python3 /app/knock_server.py --protected-port 2222"]
+# CMD ["sh", "-c", "/usr/sbin/sshd -D -p 2222 & python3 /app/knock_server.py --protected-port 2222"]

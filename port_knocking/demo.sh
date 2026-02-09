@@ -10,8 +10,9 @@ echo "[1/3] Attempting protected port before knocking"
 nc -z -v "$TARGET_IP" "$PROTECTED_PORT" || true
 
 echo "[2/3] Sending knock sequence: $SEQUENCE"
-python3 knock_client.py --target "$TARGET_IP" --sequence "$SEQUENCE" --check
+python3 knock_client.py --target "$TARGET_IP" --sequence "$SEQUENCE"
 
+sleep 1
 echo "[3/3] Attempting protected port after knocking"
 nc -z -v "$TARGET_IP" "$PROTECTED_PORT" || true
 

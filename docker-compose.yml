@@ -119,6 +119,18 @@ services:
     volumes:
       - ./port_knocking/logs:/app/logs
 
+  attacker:
+    container_name: 2_network_attacker
+    build:
+      context: ./attacker
+    networks:
+      vulnerable_network:
+        ipv4_address: 172.20.0.50
+    volumes:
+      - ./:/work
+    tty: true
+    stdin_open: true
+
 networks:
   vulnerable_network:
     driver: bridge

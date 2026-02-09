@@ -35,7 +35,7 @@ options:
 ```bash
 docker compose up port_knocking --build # Listens to port 2222 (dummy server) and starts knock_server.py which blocks requests to the protected port 2222 and listens for port knocking.
 nc 172.20.0.40 # Will fail
-python knock_client.py --target 172.20.0.40 --sequence 1234,5678,9012
+python knock_client.py --target 172.20.0.20 --sequence 1234,5678,9012
 nc 172.20.0.40 # Will succeed
 ```
 

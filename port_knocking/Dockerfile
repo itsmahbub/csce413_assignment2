@@ -15,4 +15,4 @@ RUN apt-get update \
 COPY knock_server.py knock_client.py ./
 
 
-CMD ["sh", "-c", "nc -lvp 2222 & python3 knock_server.py"]
+CMD ["sh", "-c", "nc -lvp 2222 & python3 knock_server.py --protected-port 2222 --sequence 1234,5678,9012"]

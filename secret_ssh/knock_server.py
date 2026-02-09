@@ -123,19 +123,31 @@ def listen_for_knocks(sequence, window_seconds, protected_port):
 
             conn.close()
 
-            # Initialize client
+
+            # First knock (no state yet)
             if ip not in clients:
+
+                # Must match first port
+                if port != sequence[0]:
+                    logger.info("Invalid first knock from %s: %s", ip, port)
+                    continue
+
+                # Valid first knock → start tracking
                 clients[ip] = {
-                    "index": 0,
+                    "index": 1,
                     "start": now
                 }
 
+                logger.info("First knock from %s", ip)
+                continue
+
+    
             state = clients[ip]
 
             # Check timeout
             if now - state["start"] > window_seconds:
                 logger.info("Timeout: %s", ip)
-                clients[ip] = {"index": 0, "start": now}
+                # Reset
                 del clients[ip]
                 continue
 
@@ -145,7 +157,6 @@ def listen_for_knocks(sequence, window_seconds, protected_port):
             if port != expected:
                 logger.info(f"Wrong knock from {ip}: Expected: {expected}, Got: {port}")
                 del clients[ip]
-                # clients[ip] = {"index": 0, "start": now}
                 continue
 
             # Correct knock
@@ -165,7 +176,7 @@ def listen_for_knocks(sequence, window_seconds, protected_port):
                 schedule_close(protected_port, ip)
 
                 # Reset
-                clients[ip] = {"index": 0, "start": now}
+                del clients[ip]
 
 
 def parse_args():
