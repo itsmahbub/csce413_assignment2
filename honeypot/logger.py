@@ -2,11 +2,12 @@
 
 import logging
 import os
-
+from datetime import datetime
+import json
 
 LOG_DIR = "/app/logs"
 LOG_FILE = "honeypot.log"
-
+JSONL_FILE = "events.jsonl"
 
 def create_logger(name="honeypot", level=logging.INFO):
     """
