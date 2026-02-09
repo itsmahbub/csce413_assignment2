@@ -1,5 +1,12 @@
 ## Port Knocking Server
 
+
+### Implementation Details
+
+The port-knocking server is implemented in Python using standard libraries (socket, threading, and subprocess) and Linux iptables for access control. At startup, the server blocks the protected port by inserting a default REJECT rule. It then listens on a predefined sequence of TCP ports to observe connection attempts (knocks). The protected port and the sequence of ports can be configured by user by passing command line arguments when starting the server.
+
+For each client IP, the server tracks knock progress and timestamps in memory. A knock is accepted only if the ports are contacted in the correct order and within a configurable time window. Incorrect order or timeout immediately resets the client’s state. When a client completes the full knock sequence successfully, the server temporarily inserts an iptables rule allowing that IP to access the protected port. A background thread schedules automatic rule removal after a fixed timeout, restoring the default blocked state.
+
 ### Arguments
 
 ```bash
