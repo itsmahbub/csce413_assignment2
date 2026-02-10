@@ -299,7 +299,6 @@ def main():
     ports = args.ports
     timeout = args.timeout
     thread_count = args.threads
-    # liveness_only = args.liveness_only
 
 
     print("=" * 50)

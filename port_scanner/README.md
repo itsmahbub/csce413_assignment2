@@ -1,14 +1,11 @@
+### Port Scanner
 
+### Design and Implementation
+The port scanner is designed as a multithreaded TCP scanning tool. It uses Python’s socket module to perform TCP scans. The scanner allows specifying the target hosts and ports in flexible ways like CIDR ranges, port ranges, IPs, and comma separate combinations. The scanner keeps all (target, port) pairs in a queue and multiple worker threads retrieve and process them concurrently. If the worker finds the port open, then it attempts to perform lightweight service fingerprinting through banner grabbing and HTTP probing. Responses are analyzed to identify which service is running on that port. Results are stored as a json file.
+
+
+```bash
 python port_scanner/main.py --target 172.20.0.0/24 --ports 1-65535 --threads 500 --timeout 0.1
+```
 
-curl -H "Authorization: Bearer FLAG{n3tw0rk_tr4ff1c_1s_n0t_s3cur3}" 172.20.0.21:8888
-
-ssh user@ip -p port
-
-telnet ip port
-
-Flag 1: FLAG{n3tw0rk_tr4ff1c_1s_n0t_s3cur3} - API token
-
-Flag 2: FLAG{h1dd3n_s3rv1c3s_n33d_pr0t3ct10n}
-
-Flag 3: FLAG{p0rt_kn0ck1ng_4nd_h0n3yp0ts_s4v3_th3_d4y}
+Results are stored in `results.json`
