@@ -99,3 +99,44 @@
 2026-02-09 20:41:22,330 - INFO - Knock 3/3 from 172.20.0.1
 2026-02-09 20:41:22,330 - INFO - Access granted to 172.20.0.1
 2026-02-09 20:41:22,330 - INFO - Opening 2222 for 172.20.0.1
+2026-02-10 00:09:16,176 - INFO - Blocking port 2222 by default
+2026-02-10 00:09:16,202 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-10 00:09:16,202 - INFO - Listening on 1234
+2026-02-10 00:09:16,202 - INFO - Listening on 5678
+2026-02-10 00:09:16,202 - INFO - Listening on 9012
+2026-02-10 02:50:06,947 - INFO - Blocking port 2222 by default
+2026-02-10 02:50:06,954 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-10 02:50:06,955 - INFO - Listening on 1234
+2026-02-10 02:50:06,955 - INFO - Listening on 5678
+2026-02-10 02:50:06,955 - INFO - Listening on 9012
+2026-02-10 02:53:37,561 - INFO - First knock from 172.20.0.1
+2026-02-10 02:53:37,565 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-10 02:53:37,600 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-10 02:53:37,601 - INFO - Access granted to 172.20.0.1
+2026-02-10 02:53:37,602 - INFO - Opening 2222 for 172.20.0.1
+2026-02-10 02:59:47,883 - INFO - First knock from 172.20.0.1
+2026-02-10 02:59:48,853 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-10 02:59:51,859 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-10 02:59:51,859 - INFO - Access granted to 172.20.0.1
+2026-02-10 02:59:51,864 - INFO - Opening 2222 for 172.20.0.1
+2026-02-10 03:00:03,947 - INFO - First knock from 172.20.0.1
+2026-02-10 03:00:03,948 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-10 03:00:04,452 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-10 03:00:04,453 - INFO - Access granted to 172.20.0.1
+2026-02-10 03:00:04,453 - INFO - Opening 2222 for 172.20.0.1
+2026-02-10 03:00:31,533 - INFO - First knock from 172.20.0.1
+2026-02-10 03:00:31,725 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-10 03:00:34,735 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-10 03:00:34,736 - INFO - Access granted to 172.20.0.1
+2026-02-10 03:00:34,736 - INFO - Opening 2222 for 172.20.0.1
+2026-02-10 03:01:08,959 - INFO - Blocking port 2222 by default
+2026-02-10 03:01:08,962 - INFO - Listening for knocks: [1234, 5678, 9012]
+2026-02-10 03:01:08,962 - INFO - Listening on 1234
+2026-02-10 03:01:08,962 - INFO - Listening on 5678
+2026-02-10 03:01:08,962 - INFO - Listening on 9012
+2026-02-10 03:01:42,049 - INFO - First knock from 172.20.0.1
+2026-02-10 03:01:42,821 - INFO - Knock 2/3 from 172.20.0.1
+2026-02-10 03:01:45,832 - INFO - Knock 3/3 from 172.20.0.1
+2026-02-10 03:01:45,833 - INFO - Access granted to 172.20.0.1
+2026-02-10 03:01:45,833 - INFO - Opening 2222 for 172.20.0.1
+2026-02-10 03:16:45,851 - INFO - Closing 2222 for 172.20.0.1

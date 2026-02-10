@@ -283,12 +283,6 @@ def build_parser():
         help="Number of threads (default: 100)"
     )
 
-    # parser.add_argument(
-    #     "--liveness-only",
-    #     action="store_true",
-    #     help="Return only live hosts"
-    # )
-
     return parser
 
 

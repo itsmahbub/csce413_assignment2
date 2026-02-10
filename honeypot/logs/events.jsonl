@@ -1,0 +1,5 @@
+{"timestamp": "2026-02-10T00:07:02.422334Z", "event": "connection", "client_ip": "172.20.0.1", "client_port": 55832}
+{"timestamp": "2026-02-10T00:07:02.428519Z", "event": "blacklisted_connection", "client_ip": "172.20.0.1", "client_port": 55832}
+{"timestamp": "2026-02-10T00:08:02.862445Z", "event": "connection", "client_ip": "172.20.0.1", "client_port": 36970}
+{"timestamp": "2026-02-10T00:08:02.905077Z", "event": "blacklisted_connection", "client_ip": "172.20.0.1", "client_port": 36970}
+{"timestamp": "2026-02-10T00:23:50.383537Z", "event": "connection", "client_ip": "172.20.0.1", "client_port": 49914}
